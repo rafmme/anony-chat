@@ -22,3 +22,5 @@ go.work
 
 .env
 anony-chat
+chat
+chat-app

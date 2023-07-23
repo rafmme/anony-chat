@@ -5,10 +5,10 @@ AUTHOR ?= "Timileyin Farayola"
 .PHONY: build run fp p
 
 build:  
-	go build
+	@cd ./cmd && go build -o ../chat
 
 run:
-	go run main.go
+	@go run ./cmd/main.go
 
 fp:
 	git push -f
