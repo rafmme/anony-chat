@@ -24,3 +24,5 @@ go.work
 anony-chat
 chat
 chat-app
+
+*.txt

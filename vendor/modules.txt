@@ -1,0 +1,35 @@
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+## explicit
+github.com/dgrijalva/jwt-go
+# github.com/google/uuid v1.3.0
+## explicit
+github.com/google/uuid
+# github.com/gorilla/websocket v1.5.0
+## explicit; go 1.12
+github.com/gorilla/websocket
+# github.com/jinzhu/gorm v1.9.16
+## explicit; go 1.12
+github.com/jinzhu/gorm
+# github.com/jinzhu/inflection v1.0.0
+## explicit
+github.com/jinzhu/inflection
+# github.com/lib/pq v1.10.9
+## explicit; go 1.13
+github.com/lib/pq
+github.com/lib/pq/oid
+github.com/lib/pq/scram
+# github.com/opensaucerer/barf v1.0.6
+## explicit; go 1.18
+github.com/opensaucerer/barf
+github.com/opensaucerer/barf/constant
+github.com/opensaucerer/barf/cors
+github.com/opensaucerer/barf/env
+github.com/opensaucerer/barf/helper
+github.com/opensaucerer/barf/log
+github.com/opensaucerer/barf/router
+github.com/opensaucerer/barf/router/body
+github.com/opensaucerer/barf/router/form
+github.com/opensaucerer/barf/router/param
+github.com/opensaucerer/barf/router/query
+github.com/opensaucerer/barf/server
+github.com/opensaucerer/barf/typing
