@@ -5,19 +5,17 @@ import (
 	"os"
 
 	"github.com/opensaucerer/barf"
+	"github.com/rafmme/anony-chat/pkg/shared"
 )
 
 func StartServer() {
-	type Env struct {
-		Port string `barfenv:"key=PORT;required=true"`
-	}
+	allow := true
+	env, err := shared.LoadEnvVars()
 
-	env := new(Env)
-	if err := barf.Env(env, ".env"); err != nil {
+	if err != nil {
 		barf.Logger().Error(err.Error())
 		os.Exit(1)
 	}
-	allow := true
 
 	if err := barf.Stark(barf.Augment{
 		Port:     env.Port,
