@@ -6,22 +6,17 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/opensaucerer/barf"
 	domain "github.com/rafmme/anony-chat/pkg/domain/user"
 )
 
-type Env struct {
-	Port       string `barfenv:"key=PORT;required=true"`
-	DbHost     string `barfenv:"key=DB_HOST;required=true"`
-	DbPort     string `barfenv:"key=DB_PORT;required=true"`
-	DbName     string `barfenv:"key=DB_NAME;required=true"`
-	DbUser     string `barfenv:"key=DB_USER;required=true"`
-	DbPassword string `barfenv:"key=DB_PASSWORD;required=true"`
-}
+var (
+	Database *gorm.DB
+)
 
 func LoadEnvVars() (*Env, error) {
-
 	env := new(Env)
 	if err := barf.Env(env, ".env"); err != nil {
 		return nil, err
@@ -59,8 +54,13 @@ func DbInitializers() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %s", err.Error())
 	}
-	defer db.Close()
+
+	Database = db
 
 	// Migrate the schema
 	db.AutoMigrate(&domain.User{})
+}
+
+func CreateUUID() string {
+	return uuid.New().String()
 }

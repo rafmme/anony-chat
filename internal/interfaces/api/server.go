@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/opensaucerer/barf"
+	"github.com/rafmme/anony-chat/internal/interfaces/api/handlers"
+	"github.com/rafmme/anony-chat/internal/interfaces/api/middleware"
 	"github.com/rafmme/anony-chat/pkg/shared"
 )
 
@@ -33,6 +35,12 @@ func StartServer() {
 			Message: "Welcome to the one of a kind, Anonymous Messaging Platform.",
 		})
 	})
+
+	apiRouter := barf.RetroFrame("/api").RetroFrame("/v1")
+	apiRouter.Post("/signup", middleware.ValidateSignupData(
+		handlers.SignupHandler,
+	),
+	)
 
 	if err := barf.Beck(); err != nil {
 		barf.Logger().Error(err.Error())

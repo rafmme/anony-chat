@@ -2,13 +2,13 @@ package domain
 
 type UserRepository interface {
 	// FindByID retrieves a user by its ID
-	FindByID(ID string) (*User, error)
+	FindByID(id string) *User
 
 	// FindByEmail retrieves a user by its email
-	FindByEmail(email string) (*User, error)
+	FindByEmail(email string) *User
 
 	// Save saves a user to the repository
-	Save(user *User) error
+	Save(user interface{}) *User
 
 	// DeleteByID deletes a user by its ID
 	DeleteByID(ID string) error
