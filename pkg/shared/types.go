@@ -1,5 +1,7 @@
 package shared
 
+import "net/http"
+
 type Env struct {
 	Port       string `barfenv:"key=PORT;required=true"`
 	DbHost     string `barfenv:"key=DB_HOST;required=true"`
@@ -29,4 +31,8 @@ type Response struct {
 }
 
 type AuthData struct {
+}
+
+type CustomResponseWriter struct {
+	http.ResponseWriter
 }

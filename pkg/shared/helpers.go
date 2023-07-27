@@ -1,8 +1,10 @@
 package shared
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
@@ -117,4 +119,14 @@ func GetAuthToken(reqHeader http.Header, routeType string) string {
 	)
 
 	return token
+}
+
+func (w *CustomResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	hijacker, ok := w.ResponseWriter.(http.Hijacker)
+
+	if !ok {
+		return nil, nil, http.ErrNotSupported
+	}
+
+	return hijacker.Hijack()
 }

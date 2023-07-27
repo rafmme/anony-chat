@@ -27,6 +27,7 @@ func generateUniqueID() string {
 }
 
 func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(w.Header(), r.Header)
 	claims := r.Context().Value(shared.AuthData{}).(jwt.MapClaims)
 	userID, ok := claims["sub"].(string)
 
@@ -43,7 +44,18 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	conn, err := upgrader.Upgrade(w, r, nil)
+	fmt.Println(w.Header())
+
+	customWriter := &shared.CustomResponseWriter{
+		ResponseWriter: w,
+	}
+	customWriter.Header().Add("Upgrade", "websocket")
+	customWriter.Header().Add("Connection", "Upgrade")
+	//customWriter.Header().Add("Sec-WebSocket-Accept", "websocket")
+
+	fmt.Println(customWriter.Header(), "cw")
+
+	conn, err := upgrader.Upgrade(customWriter, r, nil)
 	if err != nil {
 		log.Println("WebSocket upgrade failed:", err, userID)
 		return
