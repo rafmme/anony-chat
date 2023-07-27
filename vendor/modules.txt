@@ -33,3 +33,7 @@ github.com/opensaucerer/barf/router/param
 github.com/opensaucerer/barf/router/query
 github.com/opensaucerer/barf/server
 github.com/opensaucerer/barf/typing
+# golang.org/x/crypto v0.11.0
+## explicit; go 1.17
+golang.org/x/crypto/bcrypt
+golang.org/x/crypto/blowfish

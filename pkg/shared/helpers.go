@@ -5,11 +5,14 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/opensaucerer/barf"
 	domain "github.com/rafmme/anony-chat/pkg/domain/user"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -63,4 +66,35 @@ func DbInitializers() {
 
 func CreateUUID() string {
 	return uuid.New().String()
+}
+
+func GenerateJWT(userData *domain.User) (string, error) {
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["sub"] = userData.ID
+	claims["exp"] = time.Now().Add(time.Hour * 12).Unix()
+
+	env, err := LoadEnvVars()
+
+	if err != nil {
+		barf.Logger().Error(err.Error())
+		os.Exit(1)
+	}
+
+	return token.SignedString([]byte(env.SecretKey))
+}
+
+func HashPassword(password string) (string, error) {
+	passwordBytes := []byte(password)
+	hashedPasswordBytes, err := bcrypt.GenerateFromPassword(passwordBytes, bcrypt.MinCost)
+	return string(hashedPasswordBytes), err
+}
+
+func PasswordMatches(hashedPassword, password string) bool {
+	err := bcrypt.CompareHashAndPassword(
+		[]byte(hashedPassword),
+		[]byte(password),
+	)
+
+	return err == nil
 }

@@ -22,7 +22,7 @@ func ValidateSignupData(next http.HandlerFunc) http.HandlerFunc {
 				StatusCode: 400,
 				Errors: []map[string]string{
 					{
-						"email1": "Requires `email` field.",
+						"email": "Requires `email` field.",
 					},
 					{
 						"password": "Requires `password` field.",

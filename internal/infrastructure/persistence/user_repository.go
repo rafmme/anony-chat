@@ -28,6 +28,15 @@ func (r *UserRepository) FindByEmail(email string) *domain.User {
 	return &fetchedUser
 }
 
+func (r *UserRepository) Find(where ...interface{}) *domain.User {
+	var fetchedUser domain.User
+	shared.Database.First(
+		&fetchedUser, where...,
+	)
+
+	return &fetchedUser
+}
+
 func (r *UserRepository) Save(userData interface{}) *domain.User {
 	time := time.Now().String()
 	user := &domain.User{

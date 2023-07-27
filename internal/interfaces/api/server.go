@@ -41,6 +41,7 @@ func StartServer() {
 		handlers.SignupHandler,
 	),
 	)
+	apiRouter.Post("/auth", handlers.AuthHandler)
 
 	defer shared.Database.Close()
 
