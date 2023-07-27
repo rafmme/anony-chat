@@ -4,7 +4,7 @@ import (
 	"regexp"
 )
 
-func SignUpDataValidator(userSignupData UserSignupData) []map[string]string {
+func AuthDataValidator(authType string, userSignupData UserSignupData) []map[string]string {
 	var errList []map[string]string
 
 	emailPattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
@@ -41,10 +41,12 @@ func SignUpDataValidator(userSignupData UserSignupData) []map[string]string {
 		})
 	}
 
-	if userSignupData.ConfirmPassword != userSignupData.Password {
-		errList = append(errList, map[string]string{
-			"confirmPassword": "Password field and Confirm Password field must match.",
-		})
+	if authType != "login" {
+		if userSignupData.ConfirmPassword != userSignupData.Password {
+			errList = append(errList, map[string]string{
+				"confirmPassword": "Password field and Confirm Password field must match.",
+			})
+		}
 	}
 
 	return errList

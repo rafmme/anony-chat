@@ -1,54 +1,62 @@
 package infrastructure
 
 import (
-	"time"
-
 	domain "github.com/rafmme/anony-chat/pkg/domain/user"
 	"github.com/rafmme/anony-chat/pkg/shared"
 )
 
-var UserRepo domain.UserRepository
-
 type UserRepository struct {
 }
 
-func init() {
-	UserRepo = new(UserRepository)
+func (r *UserRepository) FindByID(id string) (*domain.User, error) {
+	var fetchedUser domain.User
+	result := shared.Database.First(&fetchedUser, "id = ?", id)
+
+	if err := result.Error; err != nil {
+		return nil, err
+	}
+
+	return &fetchedUser, nil
 }
 
-func (r *UserRepository) FindByID(id string) *domain.User {
+func (r *UserRepository) FindByEmail(email string) (*domain.User, error) {
 	var fetchedUser domain.User
-	shared.Database.First(&fetchedUser, "id = ?", id)
-	return &fetchedUser
+	result := shared.Database.First(&fetchedUser, "email = ?", email)
+
+	if err := result.Error; err != nil {
+		return nil, err
+	}
+
+	return &fetchedUser, nil
 }
 
-func (r *UserRepository) FindByEmail(email string) *domain.User {
+func (r *UserRepository) Find(where ...interface{}) (*domain.User, error) {
 	var fetchedUser domain.User
-	shared.Database.First(&fetchedUser, "email = ?", email)
-	return &fetchedUser
-}
-
-func (r *UserRepository) Find(where ...interface{}) *domain.User {
-	var fetchedUser domain.User
-	shared.Database.First(
+	result := shared.Database.First(
 		&fetchedUser, where...,
 	)
 
-	return &fetchedUser
-}
-
-func (r *UserRepository) Save(userData interface{}) *domain.User {
-	time := time.Now().String()
-	user := &domain.User{
-		ID:        shared.CreateUUID(),
-		Email:     userData.(*shared.UserSignupData).Email,
-		Password:  userData.(*shared.UserSignupData).Password,
-		CreatedAt: time,
-		UpdatedAt: time,
+	if err := result.Error; err != nil {
+		return nil, err
 	}
 
-	shared.Database.Create(user)
-	return user
+	return &fetchedUser, nil
+}
+
+func (r *UserRepository) Save(userData interface{}) (*domain.User, error) {
+	user := &domain.User{
+		ID:       shared.CreateUUID(),
+		Email:    userData.(*shared.UserSignupData).Email,
+		Password: userData.(*shared.UserSignupData).Password,
+	}
+
+	result := shared.Database.Create(user)
+
+	if err := result.Error; err != nil {
+		return nil, err
+	}
+
+	return result.Value.(*domain.User), nil
 }
 
 func (r *UserRepository) DeleteByID(ID string) error {

@@ -41,7 +41,9 @@ func StartServer() {
 		handlers.SignupHandler,
 	),
 	)
-	apiRouter.Post("/auth", handlers.AuthHandler)
+	apiRouter.Post("/auth", middleware.ValidateAuthData(
+		handlers.AuthHandler),
+	)
 
 	chatRouter := barf.RetroFrame("/ws")
 	chatRouter.Get("/chat", middleware.Authenticate(

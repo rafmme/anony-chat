@@ -1,11 +1,13 @@
 package domain
 
+import "time"
+
 type User struct {
-	ID        string `gorm:"primary_key"`
-	Email     string `gorm:"unique;column:email"`
-	Password  string `gorm:"column:password"`
-	CreatedAt string `gorm:"column:createdAt"`
-	UpdatedAt string `gorm:"column:updatedAt"`
+	ID        string    `gorm:"not null;primary_key"`
+	Email     string    `gorm:"unique;not null;column:email"`
+	Password  string    `gorm:"not null;column:password"`
+	CreatedAt time.Time `gorm:"not null;autoCreateTime;column:createdAt"`
+	UpdatedAt time.Time `gorm:"not null;autoUpdateTime;column:updatedAt"`
 }
 
 func (User) TableName() string {

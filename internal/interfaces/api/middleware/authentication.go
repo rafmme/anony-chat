@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"strings"
@@ -51,7 +52,7 @@ func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		_, ok := token.Claims.(jwt.MapClaims)
+		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
 			barf.Response(w).Status(http.StatusUnauthorized).JSON(shared.ErrorResponse{
 				StatusCode: 401,
@@ -65,6 +66,10 @@ func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(
+			r.Context(), shared.AuthData{},
+			claims,
+		)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

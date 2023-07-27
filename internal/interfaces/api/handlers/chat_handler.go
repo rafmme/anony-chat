@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/websocket"
 	"github.com/opensaucerer/barf"
 	"github.com/rafmme/anony-chat/pkg/shared"
@@ -26,9 +27,25 @@ func generateUniqueID() string {
 }
 
 func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
+	claims := r.Context().Value(shared.AuthData{}).(jwt.MapClaims)
+	userID, ok := claims["sub"].(string)
+
+	if !ok {
+		barf.Response(w).Status(http.StatusUnauthorized).JSON(shared.ErrorResponse{
+			StatusCode: 401,
+			Errors: []map[string]string{
+				{
+					"auth": "Unauthorized.",
+				},
+			},
+			Message: "Unauthorized.",
+		})
+		return
+	}
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("WebSocket upgrade failed:", err)
+		log.Println("WebSocket upgrade failed:", err, userID)
 		return
 	}
 	defer conn.Close()
