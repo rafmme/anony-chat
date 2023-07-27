@@ -3,8 +3,10 @@ package shared
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -97,4 +99,22 @@ func PasswordMatches(hashedPassword, password string) bool {
 	)
 
 	return err == nil
+}
+
+func GetAuthToken(reqHeader http.Header, routeType string) string {
+	var token string
+
+	if routeType == "ws" {
+		return strings.Replace(
+			reqHeader.Get("Sec-Websocket-Protocol"),
+			"Authorization, ", "", 1,
+		)
+	}
+
+	token = strings.Replace(
+		reqHeader.Get("Authorization"),
+		"Bearer ", "", 1,
+	)
+
+	return token
 }

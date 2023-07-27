@@ -9,14 +9,14 @@
 
     <script>
       // Replace 'your_websocket_endpoint' with the actual WebSocket URL
-      const websocketUrl = "ws://localhost:8080/ws";
+      const websocketUrl = "ws://localhost:6776/ws/chat";
 
       // Replace 'your_authorization_token' with the actual authorization token
       const authorizationToken =
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTA0Nzg0MjQsInN1YiI6ImQ5MTVkN2I1LWRjYTItNGJlYy1iN2ZkLTRiZGI4ZDlmNDY3MCJ9.B8J4rM1affVlGUg5o_RBFxwEg8qrdmAea-j67UFvsIw";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTA1MjU2MzksInN1YiI6IjcwMDA4MTI5LTA0N2UtNDMyZi1hOTIzLTAwMTVkYjNkZTVjMyJ9.k9WaxYdv7ZvvmIyMX0EjHTGft9WmUB8EJjkOshv0x8I";
 
       // Connect to the WebSocket endpoint with the authorization header
-      const socket = new WebSocket(websocketUrl);
+      const socket = new WebSocket(websocketUrl, [authorizationToken]);
 
       // Handle incoming messages
       socket.onmessage = function (event) {

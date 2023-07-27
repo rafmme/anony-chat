@@ -13,7 +13,8 @@ import (
 
 func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tokenString := r.Header.Get("Authorization")
+		tokenString := shared.GetAuthToken(r.Header, "ws")
+
 		if tokenString == "" {
 			barf.Response(w).Status(http.StatusUnauthorized).JSON(shared.ErrorResponse{
 				StatusCode: 401,
