@@ -43,6 +43,12 @@ func StartServer() {
 	)
 	apiRouter.Post("/auth", handlers.AuthHandler)
 
+	chatRouter := barf.RetroFrame("/ws")
+	chatRouter.Get("/chat", middleware.Authenticate(
+		handlers.HandleWebSocketConnection,
+	),
+	)
+
 	defer shared.Database.Close()
 
 	if err := barf.Beck(); err != nil {
