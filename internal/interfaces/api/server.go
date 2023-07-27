@@ -42,6 +42,8 @@ func StartServer() {
 	),
 	)
 
+	defer shared.Database.Close()
+
 	if err := barf.Beck(); err != nil {
 		barf.Logger().Error(err.Error())
 		os.Exit(1)

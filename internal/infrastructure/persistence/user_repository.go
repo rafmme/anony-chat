@@ -17,29 +17,23 @@ func init() {
 }
 
 func (r *UserRepository) FindByID(id string) *domain.User {
-	defer shared.Database.Close()
-
 	var fetchedUser domain.User
 	shared.Database.First(&fetchedUser, "id = ?", id)
 	return &fetchedUser
 }
 
 func (r *UserRepository) FindByEmail(email string) *domain.User {
-	defer shared.Database.Close()
-
 	var fetchedUser domain.User
 	shared.Database.First(&fetchedUser, "email = ?", email)
 	return &fetchedUser
 }
 
 func (r *UserRepository) Save(userData interface{}) *domain.User {
-	defer shared.Database.Close()
-
 	time := time.Now().String()
 	user := &domain.User{
 		ID:        shared.CreateUUID(),
-		Email:     userData.(shared.UserSignupData).Email,
-		Password:  userData.(shared.UserSignupData).Password,
+		Email:     userData.(*shared.UserSignupData).Email,
+		Password:  userData.(*shared.UserSignupData).Password,
 		CreatedAt: time,
 		UpdatedAt: time,
 	}
