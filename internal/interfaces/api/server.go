@@ -32,13 +32,14 @@ func (server *Server) Start() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", fs)
 
-	http.Handle("/api/v1/signup", middleware.ValidateSignupData(
+	http.Handle("/api/v1/auth/signup", middleware.ValidateSignupData(
 		handlers.SignupHandler,
 	),
 	)
 
-	http.Handle("/api/v1/auth", middleware.ValidateAuthData(
-		handlers.AuthHandler),
+	http.Handle("/api/v1/auth/login", middleware.ValidateAuthData(
+		handlers.AuthHandler,
+	),
 	)
 
 	http.Handle("/ws/chat", middleware.Authenticate(

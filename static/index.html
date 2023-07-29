@@ -29,6 +29,21 @@
         margin-bottom: 30px;
       }
 
+      .alert {
+        background: #e74c3c !important;
+        padding: 5px 10px 5px 10px;
+        color: white;
+        opacity: 1;
+        transition: opacity 0.6s;
+        margin-bottom: 15px;
+        font-family: "Arimo" !important;
+        border-radius: 5px;
+      }
+
+      #loginErrorDiv {
+        display: none;
+      }
+
       form {
         display: flex;
         flex-direction: column;
@@ -63,36 +78,45 @@
         text-decoration: none;
       }
     </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
   </head>
 
   <body>
     <div class="container">
       <h1><a href="./index.html">Anony Chat 💬</a></h1>
       <h1>Login</h1>
-      <form id="loginForm">
+      <div class="alert" id="loginErrorDiv">
+        <p id="loginErrorMessage"></p>
+      </div>
+      <form id="loginForm" method="post">
         <input type="email" placeholder="Email" id="email" required />
         <input type="password" placeholder="Password" id="password" required />
-        <button id="login" onclick="nextPage()">Login</button>
+        <button id="login-btn">Login</button>
       </form>
       <div class="divider">or</div>
       <h1>Sign Up</h1>
       <form id="signupForm">
-        <input type="email" placeholder="Email" id="email" required />
-        <input type="password" placeholder="Password" id="password" required />
+        <input type="email" placeholder="Email" id="s-email" required />
+        <input
+          type="password"
+          placeholder="Password"
+          id="s-password"
+          required
+        />
         <input
           type="password"
           placeholder="Confirm Password"
           id="re-password"
           required
         />
-        <button type="submit" id="signup" onclick="nextPage()">Sign Up</button>
+        <button type="submit" id="signup">Sign Up</button>
       </form>
     </div>
 
-    <script>
-      function nextPage() {
-        window.location.href = "./online.html";
-      }
-    </script>
+    <script src="./js/jwt-decode.js"></script>
+    <script src="./js/auth.js"></script>
   </body>
 </html>
