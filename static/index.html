@@ -44,6 +44,10 @@
         display: none;
       }
 
+      #signupErrorDiv {
+        display: none;
+      }
+
       form {
         display: flex;
         flex-direction: column;
@@ -98,6 +102,9 @@
       </form>
       <div class="divider">or</div>
       <h1>Sign Up</h1>
+      <div class="alert" id="signupErrorDiv">
+        <p id="signupErrorMessage"></p>
+      </div>
       <form id="signupForm">
         <input type="email" placeholder="Email" id="s-email" required />
         <input
@@ -112,7 +119,7 @@
           id="re-password"
           required
         />
-        <button type="submit" id="signup">Sign Up</button>
+        <button type="submit" id="signup-btn">Sign Up</button>
       </form>
     </div>
 

@@ -178,8 +178,8 @@ func AuthHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	barf.Response(w).Status(http.StatusCreated).JSON(shared.Response{
-		StatusCode: 201,
+	barf.Response(w).Status(http.StatusOK).JSON(shared.Response{
+		StatusCode: 200,
 		Message:    "User Auth was successful.",
 		Data: map[string]map[string]string{
 			"user": {
