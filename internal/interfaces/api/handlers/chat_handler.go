@@ -20,14 +20,13 @@ var upgrader = websocket.Upgrader{
 var clients = make(map[string]*websocket.Conn)
 var clientsLock sync.Mutex
 
-func generateUniqueID() string {
+func generateUserID(userId string) string {
 	clientsLock.Lock()
 	defer clientsLock.Unlock()
-	return fmt.Sprintf("client-%s", shared.CreateUUID()[0:8])
+	return fmt.Sprintf("client-%s", userId[0:8])
 }
 
 func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(w.Header(), r.Header)
 	claims := r.Context().Value(shared.AuthData{}).(jwt.MapClaims)
 	userID, ok := claims["sub"].(string)
 
@@ -44,35 +43,23 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(w.Header())
-
-	customWriter := &shared.CustomResponseWriter{
-		ResponseWriter: w,
-	}
-	customWriter.Header().Add("Upgrade", "websocket")
-	customWriter.Header().Add("Connection", "Upgrade")
-	//customWriter.Header().Add("Sec-WebSocket-Accept", "websocket")
-
-	fmt.Println(customWriter.Header(), "cw")
-
-	conn, err := upgrader.Upgrade(customWriter, r, nil)
+	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("WebSocket upgrade failed:", err, userID)
 		return
 	}
 	defer conn.Close()
 
-	// Generate a unique ID for the client
-	clientID := generateUniqueID()
+	clientID := generateUserID(userID)
 
-	// Store the WebSocket connection with the unique ID
-	clientsLock.Lock()
-	clients[clientID] = conn
-	clientsLock.Unlock()
+	if clients[clientID] == nil {
+		clientsLock.Lock()
+		clients[clientID] = conn
+		clientsLock.Unlock()
 
-	log.Printf("Client connected with ID: %s", clientID)
+		log.Printf("Client connected with ID: %s", clientID)
+	}
 
-	// Handle incoming messages from the client
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
@@ -81,7 +68,7 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		log.Printf("Received message from client %s: %s", clientID, msg)
+		log.Printf("Received message from %s: %s", clientID, msg)
 
 		// Example: Broadcast the message to all other clients
 		clientsLock.Lock()

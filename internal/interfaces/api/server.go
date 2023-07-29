@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -10,25 +12,24 @@ import (
 	"github.com/rafmme/anony-chat/pkg/shared"
 )
 
-func StartServer() {
-	allow := true
-	env, err := shared.LoadEnvVars()
+type Server struct {
+	listenAddr string
+}
 
-	if err != nil {
-		barf.Logger().Error(err.Error())
-		os.Exit(1)
+func CreateServer() *Server {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		log.Printf("PORT variable empty!")
 	}
 
-	if err := barf.Stark(barf.Augment{
-		Port:     env.Port,
-		Logging:  &allow,
-		Recovery: &allow,
-	}); err != nil {
-		barf.Logger().Error(err.Error())
-		os.Exit(1)
+	return &Server{
+		listenAddr: port,
 	}
+}
 
-	barf.Get("/", func(w http.ResponseWriter, r *http.Request) {
+func (server *Server) Start() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
 			Status:  true,
 			Data:    nil,
@@ -36,25 +37,28 @@ func StartServer() {
 		})
 	})
 
-	apiRouter := barf.RetroFrame("/api").RetroFrame("/v1")
-	apiRouter.Post("/signup", middleware.ValidateSignupData(
+	http.Handle("/api/v1/signup", middleware.ValidateSignupData(
 		handlers.SignupHandler,
 	),
 	)
-	apiRouter.Post("/auth", middleware.ValidateAuthData(
+
+	http.Handle("/api/v1/auth", middleware.ValidateAuthData(
 		handlers.AuthHandler),
 	)
 
-	chatRouter := barf.RetroFrame("/ws")
-	chatRouter.Get("/chat", middleware.Authenticate(
+	http.Handle("/ws/chat", middleware.Authenticate(
 		handlers.HandleWebSocketConnection,
 	),
 	)
 
 	defer shared.Database.Close()
 
-	if err := barf.Beck(); err != nil {
-		barf.Logger().Error(err.Error())
+	port := fmt.Sprintf(":%s", server.listenAddr)
+	barf.Logger().Info(fmt.Sprintf("🆙 Server up on PORT %s", port))
+	err := http.ListenAndServe(port, nil)
+
+	if err != nil {
+		barf.Logger().Error("Could'nt start the server. " + err.Error())
 		os.Exit(1)
 	}
 }

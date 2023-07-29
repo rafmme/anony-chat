@@ -13,7 +13,7 @@ import (
 
 func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tokenString := shared.GetAuthToken(r.Header, "ws")
+		tokenString := shared.GetAuthToken(r, "ws")
 
 		if tokenString == "" {
 			barf.Response(w).Status(http.StatusUnauthorized).JSON(shared.ErrorResponse{
@@ -29,15 +29,9 @@ func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		tokenString = strings.Replace(tokenString, "Bearer ", "", 1)
-		env, err := shared.LoadEnvVars()
-
-		if err != nil {
-			barf.Logger().Error(err.Error())
-			os.Exit(1)
-		}
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return []byte(env.SecretKey), nil
+			return []byte(os.Getenv("SECRET_KEY")), nil
 		})
 
 		if err != nil || !token.Valid {
