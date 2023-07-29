@@ -29,13 +29,8 @@ func CreateServer() *Server {
 }
 
 func (server *Server) Start() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
-			Status:  true,
-			Data:    nil,
-			Message: "Welcome to the one of a kind, Anonymous Messaging Platform.",
-		})
-	})
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/", fs)
 
 	http.Handle("/api/v1/signup", middleware.ValidateSignupData(
 		handlers.SignupHandler,
