@@ -153,7 +153,7 @@ const signup = async (evt) => {
   /* loginBtn.style.background = 'darkgray'; */
   signupBtn.style.color = "white";
   signupBtn.innerHTML =
-    '<i class="fa fa-spinner fa-spin"></i> Logging you in...';
+    '<i class="fa fa-spinner fa-spin"></i> Signing you up...';
   signupBtn.disabled = true;
 
   const signupData = JSON.stringify({
