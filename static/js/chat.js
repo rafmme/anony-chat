@@ -9,7 +9,7 @@ try {
   const chatHolder = document.getElementById("chat-holder");
 
   const userId = `user-${sub.substring(0, 8)}`;
-  userTag.innerText = `Current User ID: ${userId}`;
+  userTag.innerText = `Your User ID: ${userId}`;
 
   // Replace 'your_websocket_endpoint' with the actual WebSocket URL
   const websocketUrl = `ws://localhost:6777/ws/chat?auth_token=${encodeURI(
@@ -65,15 +65,18 @@ try {
     }
 
     if (data.msgType.toLowerCase() === "msg") {
-      const { message, sender, date: msgTime } = data;
+      const { message, sender, date: msgTime, mentioned, private } = data;
       const date = new Date(msgTime).toLocaleString();
 
       if (sender === userId) {
         chatHolder.innerHTML += `<div class="chat-message-right pb-4">
                     <div>
-                      <div class="text-muted small text-nowrap mt-2">
-                        ${date}
+                      <div class="small text-nowrap mt-2 chat-online">
+                        ${private ? "private message" : ""}
                       </div>
+                      <div class="text-muted small text-nowrap mt-2">
+                      ${date}
+                    </div>
                     </div>
                     <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
                       <div class="font-weight-bold mb-1">You</div>
@@ -83,9 +86,15 @@ try {
       } else {
         chatHolder.innerHTML += `<div class="chat-message-left pb-4">
         <div>
-          <div class="text-muted small text-nowrap mt-2">
-            ${date}
+          <div class="small text-nowrap mt-2 chat-online">
+          ${private ? "private message" : ""}
           </div>
+          <div class="small text-nowrap mt-2 chat-offline">
+          ${mentioned ? "You were mentioned here!" : ""}
+          </div>
+          <div class="text-muted small text-nowrap mt-2">
+          ${date}
+        </div>
         </div>
         <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
           <div class="font-weight-bold mb-1">${sender}</div>

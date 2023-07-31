@@ -102,3 +102,47 @@ func GetAuthToken(r *http.Request, routeType string) string {
 
 	return token
 }
+
+func GetUserIDsInChatMessage(chat, prefix string) []string {
+	userIDs := []string{}
+
+	if strings.HasPrefix(chat, prefix) {
+		if strings.HasPrefix(chat, prefix+"[") {
+			formattedChat := strings.ReplaceAll(
+				strings.ReplaceAll(
+					strings.ReplaceAll(
+						strings.Split(chat, " ")[0], prefix, ""),
+					"[", ""), "]", "",
+			)
+
+			userIDs = strings.Split(formattedChat, ",")
+			return userIDs
+		}
+
+		userIDs = append(userIDs,
+			strings.ReplaceAll(
+				strings.Split(chat, " ")[0],
+				prefix, ""),
+		)
+
+		return userIDs
+	}
+
+	return userIDs
+}
+
+func CheckIfStringInSlice(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
+}
+
+func RemoveUsersIDFromMessage(str string) string {
+	chatArray := strings.Split(str, " ")
+	chatArray[0] = ""
+	return strings.Trim(strings.Join(chatArray, " "), " ")
+}
