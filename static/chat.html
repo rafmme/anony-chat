@@ -1,117 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
+    <meta charset="utf-8" />
 
-      .chat-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: 100vh;
-        background-color: #f0f0f0;
-      }
-
-      .chat-box {
-        width: 45%;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        padding: 10px;
-        overflow-y: auto;
-        max-height: 500px;
-      }
-
-      .message {
-        margin-bottom: 10px;
-      }
-
-      .msg-display {
-        display: inline-flex;
-        flex-direction: column;
-      }
-
-      .msg-display span {
-        font-size: 12px;
-        text-align: left;
-      }
-
-      .sender-message {
-        text-align: right;
-        color: #007bff;
-      }
-
-      .receiver-message {
-        text-align: left;
-        color: #333;
-      }
-
-      .message-content {
-        padding: 5px 10px;
-        border-radius: 8px;
-      }
-
-      a {
-        color: #007bff;
-        text-decoration: none;
-      }
-    </style>
+    <title>Anony Chat App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="./css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/styles.css" />
   </head>
-
   <body>
-    <div class="chat-container">
-      <h1><a href="./index.html">Anony Chat 💬</a></h1>
-      <div class="chat-box" id="chatBox">
-        <div class="message sender-message">
-          <div class="message-content msg-display">
-            <span>User ID: Aerecjgd5</span>
-            <span>Sun Jul 23 2023, 10:00:08 AM</span>
-            Hi there! This is the sender's message.
-          </div>
-        </div>
-        <div class="message receiver-message">
-          <div class="message-content msg-display">
-            <span>User ID: 86tghgfc</span>
-            <span>Sun Jul 23 2023, 10:05:08 AM</span>
-            Hello! This is the receiver's message.
-          </div>
-        </div>
-        <div class="message receiver-message">
-          <div class="message-content msg-display">
-            <span>User ID: 86tghgfc</span>
-            <span>Sun Jul 23 2023, 10:05:08 AM</span>
-            Hello! This is the receiver's message.
-          </div>
-        </div>
-        <div class="message receiver-message">
-          <div class="message-content msg-display">
-            <span>User ID: 86tghgfc</span>
-            <span>Sun Jul 23 2023, 10:05:08 AM</span>
-            Hello! This is the receiver's message.
-          </div>
-        </div>
-        <div class="message sender-message">
-          <div class="message-content msg-display">
-            <span>User ID: Aerecjgd5</span>
-            <span>Sun Jul 23 2023, 10:00:08 AM</span>
-            Hi there! This is the sender's message.
-          </div>
-        </div>
-        <div class="message sender-message">
-          <div class="message-content msg-display">
-            <span>User ID: Aerecjgd5</span>
-            <span>Sun Jul 23 2023, 10:00:08 AM</span>
-            Hi there! This is the sender's message.
+    <main class="content">
+      <div class="container p-0">
+        <h1 class="h3 mb-3">Anony Chat App</h1>
+        <div class="card">
+          <div class="row g-0">
+            <div class="col-12 col-lg-5 col-xl-3 border-right">
+              <div class="px-4 d-none d-md-block">
+                <div class="d-flex align-items-center">
+                  <div class="flex-grow-1">
+                    <h5>...</h5>
+                  </div>
+                </div>
+                <h5>Current Active Users</h5>
+                <h6 id="clientCount"></h6>
+              </div>
+              <div id="online-peeps">
+                <!--   <a
+                  href="#"
+                  class="list-group-item list-group-item-action border-0"
+                >
+                  <div class="d-flex align-items-start">
+                    <img
+                      src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                      class="rounded-circle mr-1 us"
+                      alt="Jennifer Chang"
+                      width="40"
+                      height="40"
+                    />
+                    <div class="flex-grow-1 ml-3">
+                      Jennifer Chang
+                      <div class="small">
+                        <span class="fas fa-circle chat-offline"></span> Offline
+                      </div>
+                    </div>
+                  </div>
+                </a> -->
+              </div>
+              <hr class="d-block d-lg-none mt-1 mb-0" />
+            </div>
+            <div class="col-12 col-lg-7 col-xl-9">
+              <div class="py-2 px-4 border-bottom d-none d-lg-block">
+                <div class="d-flex align-items-center py-1">
+                  <div class="flex-grow-1 pl-3">
+                    <strong>Chat</strong>
+                    <div class="text-muted small">
+                      <em id="userTag"></em>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      class="btn btn-danger btn-lg mr-1 px-3"
+                      id="logoutBtn"
+                    >
+                      Leave
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="position-relative">
+                <div class="chat-messages p-4" id="chat-holder"></div>
+              </div>
+              <div class="flex-grow-0 py-3 px-4 border-top">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Type your message"
+                    id="text-msg"
+                  />
+                  <button class="btn btn-primary" id="sendBtn">Send</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
+    <script src="./js/jwt-decode.js"></script>
+    <script src="./js/chat.js"></script>
   </body>
 </html>

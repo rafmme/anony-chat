@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/websocket"
@@ -23,7 +24,29 @@ var clientsLock sync.Mutex
 func generateUserID(userId string) string {
 	clientsLock.Lock()
 	defer clientsLock.Unlock()
-	return fmt.Sprintf("client-%s", userId[0:8])
+	return fmt.Sprintf("user-%s", userId[0:8])
+}
+
+func sendClientCount() {
+	count := len(clients)
+	clientsList := map[string]string{}
+
+	for clientId := range clients {
+		clientsList[clientId] = clientId
+	}
+
+	for id, client := range clients {
+		err := client.WriteJSON(map[string]interface{}{
+			"msgType":     "count",
+			"clientCount": count,
+			"clientsList": clientsList,
+		})
+		if err != nil {
+			log.Println("Error sending client count:", err)
+			client.Close()
+			delete(clients, id)
+		}
+	}
 }
 
 func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
@@ -57,6 +80,7 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		clients[clientID] = conn
 		clientsLock.Unlock()
 
+		sendClientCount()
 		log.Printf("Client connected with ID: %s", clientID)
 	}
 
@@ -73,8 +97,17 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		// Example: Broadcast the message to all other clients
 		clientsLock.Lock()
 		for id, c := range clients {
-			if id != clientID {
-				c.WriteMessage(websocket.TextMessage, msg)
+			err := c.WriteJSON(map[string]interface{}{
+				"msgType": "msg",
+				"message": string(msg),
+				"sender":  clientID,
+				"date":    time.Now(),
+			})
+
+			if err != nil {
+				log.Println("Error sending client message:", err)
+				c.Close()
+				delete(clients, id)
 			}
 		}
 		clientsLock.Unlock()
@@ -85,5 +118,6 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 	delete(clients, clientID)
 	clientsLock.Unlock()
 
+	sendClientCount()
 	log.Printf("Client %s disconnected", clientID)
 }
