@@ -13,6 +13,8 @@ import (
 	"github.com/rafmme/anony-chat/pkg/shared"
 )
 
+const serverId string = "ac"
+
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -28,19 +30,24 @@ func generateUserID(userId string) string {
 }
 
 func sendClientCount() {
-	count := len(clients)
-	clientsList := map[string]string{}
+	clientsList := map[string]string{
+		serverId: serverId,
+	}
 
 	for clientId := range clients {
 		clientsList[clientId] = clientId
 	}
 
+	sendServerMessage(&shared.Message{
+		MsgType:     "count",
+		ClientCount: len(clientsList),
+		ClientsList: clientsList,
+	})
+}
+
+func sendServerMessage(message *shared.Message) {
 	for id, client := range clients {
-		err := client.WriteJSON(map[string]interface{}{
-			"msgType":     "count",
-			"clientCount": count,
-			"clientsList": clientsList,
-		})
+		err := client.WriteJSON(message)
 		if err != nil {
 			log.Println("Error sending client count:", err)
 			client.Close()
@@ -81,6 +88,14 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		clientsLock.Unlock()
 
 		sendClientCount()
+		sendServerMessage(&shared.Message{
+			MsgType:  "msg",
+			Action:   "joined",
+			ClientID: clientID,
+			Message:  fmt.Sprintf("%s has joined the chat.", clientID),
+			Sender:   serverId,
+			Date:     time.Now(),
+		})
 		log.Printf("Client connected with ID: %s", clientID)
 	}
 
@@ -156,5 +171,11 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 	clientsLock.Unlock()
 
 	sendClientCount()
+	sendServerMessage(&shared.Message{
+		MsgType: "msg",
+		Message: fmt.Sprintf("%s has left the chat.", clientID),
+		Sender:  serverId,
+		Date:    time.Now(),
+	})
 	log.Printf("Client %s disconnected", clientID)
 }
