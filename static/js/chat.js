@@ -7,6 +7,8 @@ try {
   const sendBtn = document.getElementById("sendBtn");
   const onlineUsersHolder = document.getElementById("online-peeps");
   const chatHolder = document.getElementById("chat-holder");
+  const notificationBell = document.getElementById("notice-bell");
+  const mentionText = document.getElementById("m-txt");
 
   const userId = `user-${sub.substring(0, 8)}`;
   userTag.innerText = `Your User ID: ${userId}`;
@@ -55,6 +57,25 @@ try {
       const { message, sender, date: msgTime, mentioned, private } = data;
       const date = new Date(msgTime).toLocaleString();
 
+      if (mentioned) {
+        notificationBell.classList.remove("hide");
+        notificationBell.classList.replace(
+          "btn-outline-secondary",
+          "bg-danger"
+        );
+        notificationBell.classList.add("text-white");
+        mentionText.innerText = `${sender} just mentioned you.`
+
+        setTimeout(() => {
+          notificationBell.classList.remove("text-white");
+          notificationBell.classList.replace(
+            "bg-danger",
+            "btn-outline-secondary"
+          );
+          notificationBell.classList.add("hide");
+        }, 10000);
+      }
+
       if (sender === userId) {
         chatHolder.innerHTML += `<div class="chat-message-right pb-4">
                     <div>
@@ -65,8 +86,8 @@ try {
                         ${private ? "private message" : ""}
                       </div>
                     </div>
-                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                      <div class="font-weight-bold mb-1">You</div>
+                    <div class="flex-shrink-1 you-chat-bg rounded py-2 px-3 mr-3">
+                      <div class="font-weight-bold mb-1 you-name-bg">You</div>
                       ${message}
                     </div>
                   </div>`;
@@ -83,8 +104,8 @@ try {
         ${mentioned ? "You were mentioned here!" : ""}
         </div>
         </div>
-        <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-          <div class="font-weight-bold mb-1">${sender}</div>
+        <div class="flex-shrink-1 them-chat-bg rounded py-2 px-3 ml-3">
+          <div class="font-weight-bold mb-1 them-name-bg">${sender}</div>
           ${
             message.includes("joined") && message.includes(userId)
               ? "You have joined the chat"

@@ -45,3 +45,29 @@ body {
 .border-top {
   border-top: 1px solid #dee2e6 !important;
 }
+
+.you-chat-bg {
+  background: rgba(52, 54, 66, 0.92) !important;
+  color: #fff !important;
+}
+
+.them-chat-bg {
+  background: rgb(0, 0, 0, 1.9) !important;
+  color: #fff !important;
+}
+
+.them-name-bg {
+  color: burlywood !important;
+}
+
+.you-name-bg {
+  color: bisque !important;
+}
+
+.text-white {
+  color: #fff !important;
+}
+
+.hide {
+  display: none !important;
+}
