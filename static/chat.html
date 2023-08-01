@@ -7,8 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="./css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/modal.css" />
   </head>
   <body>
+    <div id="myModal" class="modal" onclick="closeModal()">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Confirm Action</h2>
+        <p>Are you sure you want to leave the Chat room?</p>
+        <div class="modal-buttons">
+          <button onclick="closeModal()">Cancel</button>
+          <button onclick="performAction()">Confirm</button>
+        </div>
+      </div>
+    </div>
     <main class="content">
       <div class="container p-0">
         <h1 class="h3 mb-3">Anony Chat App</h1>
@@ -35,7 +47,7 @@
                   <div class="flex-grow-1 pl-3">
                     <strong>Chat</strong>
                     <div class="text-muted small">
-                      <em id="userTag"></em>
+                      <span id="userTag"></span>
                     </div>
                   </div>
                   <div>

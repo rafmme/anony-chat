@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login and Sign Up Page</title>
     <style>
+      @font-face {
+        font-family: "Lato";
+        src: url("./fonts/Lato-Regular.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Lato";
+        src: url("./fonts/Lato-Bold.ttf") format("truetype");
+        font-weight: bold;
+        font-style: normal;
+      }
+
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Lato", sans-serif;
         background-color: #f0f0f0;
         margin: 0;
         padding: 0;
@@ -96,8 +110,20 @@
         <p id="loginErrorMessage"></p>
       </div>
       <form id="loginForm" method="post">
-        <input type="email" placeholder="Email" id="email" required />
-        <input type="password" placeholder="Password" id="password" required />
+        <input
+          type="email"
+          placeholder="Email"
+          id="email"
+          name="email"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          id="password"
+          name="password"
+          required
+        />
         <button id="login-btn">Login</button>
       </form>
       <div class="divider">or</div>
@@ -106,17 +132,25 @@
         <p id="signupErrorMessage"></p>
       </div>
       <form id="signupForm">
-        <input type="email" placeholder="Email" id="s-email" required />
+        <input
+          type="email"
+          placeholder="Email"
+          id="s-email"
+          name="s-email"
+          required
+        />
         <input
           type="password"
           placeholder="Password"
           id="s-password"
+          name="s-password"
           required
         />
         <input
           type="password"
           placeholder="Confirm Password"
           id="re-password"
+          name="re-password"
           required
         />
         <button type="submit" id="signup-btn">Sign Up</button>

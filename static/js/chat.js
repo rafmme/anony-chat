@@ -2,6 +2,7 @@ try {
   const token = localStorage.getItem("userToken");
   const { sub } = jwt_decode(token);
 
+  const modal = document.getElementById("myModal");
   const userTag = document.getElementById("userTag");
   const logoutBtn = document.getElementById("logoutBtn");
   const sendBtn = document.getElementById("sendBtn");
@@ -13,12 +14,10 @@ try {
   const userId = `user-${sub.substring(0, 8)}`;
   userTag.innerText = `Your User ID: ${userId}`;
 
-  // Replace 'your_websocket_endpoint' with the actual WebSocket URL
   const websocketUrl = `ws://localhost:6777/ws/chat?auth_token=${encodeURI(
     token
   )}`;
 
-  // Connect to the WebSocket endpoint with the authorization header
   const socket = new WebSocket(websocketUrl);
 
   // Handle incoming messages
@@ -144,11 +143,21 @@ try {
     }
   });
 
-  const logout = async (evt) => {
-    evt.preventDefault();
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  function performAction() {
+    closeModal();
+
     localStorage.setItem("accepted", false);
     localStorage.removeItem("userToken");
     window.location.reload();
+  }
+
+  const logout = async (evt) => {
+    evt.preventDefault();
+    modal.style.display = "block";
   };
 
   logoutBtn.addEventListener("click", logout);

@@ -111,114 +111,8 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		text := string(msg)
 		log.Printf("Received message from %s: %s", clientID, msg)
 
-		mentionList := shared.GetUserIDsInChatMessage(text, "@")
-		privateMessageList := shared.GetUserIDsInChatMessage(text, ".")
-
-		// Example: Broadcast the message to all other clients
 		clientsLock.Lock()
-
-		if (len(mentionList) == 1 &&
-			strings.ToLower(mentionList[0]) == serverId) ||
-			(len(privateMessageList) == 1 &&
-				strings.ToLower(privateMessageList[0]) == serverId) {
-
-			if strings.HasPrefix(text, "@") {
-				sendServerMessage(&shared.Message{
-					MsgType: "msg",
-					Message: text,
-					Sender:  clientID,
-					Date:    time.Now(),
-				})
-			} else {
-				err := clients[clientID].WriteJSON(&shared.Message{
-					MsgType: "msg",
-					Message: text,
-					Sender:  clientID,
-					Private: true,
-					Date:    time.Now(),
-				})
-
-				if err != nil {
-					log.Println("Error sending client message:", err)
-					clients[clientID].Close()
-					delete(clients, clientID)
-				}
-			}
-
-			botResponse := shared.ServerChat()
-			if len(botResponse) > 0 {
-				if strings.HasPrefix(text, "@") {
-					sendServerMessage(&shared.Message{
-						MsgType:   "msg",
-						Message:   fmt.Sprintf("@%s: %s", clientID, botResponse),
-						Sender:    serverId,
-						Mentioned: true,
-						Date:      time.Now(),
-					})
-				} else {
-					err := clients[clientID].WriteJSON(&shared.Message{
-						MsgType: "msg",
-						Message: botResponse,
-						Sender:  serverId,
-						Private: true,
-						Date:    time.Now(),
-					})
-
-					if err != nil {
-						log.Println("Error sending client message:", err)
-						clients[clientID].Close()
-						delete(clients, clientID)
-					}
-				}
-			}
-		} else {
-			if len(privateMessageList) > 0 {
-				for id, c := range clients {
-					if shared.CheckIfStringInSlice(privateMessageList, id) || id == clientID {
-						err := c.WriteJSON(&shared.Message{
-							MsgType: "msg",
-							Message: shared.RemoveUsersIDFromMessage(text),
-							Sender:  clientID,
-							Private: true,
-							Date:    time.Now(),
-						})
-
-						if err != nil {
-							log.Println("Error sending client message:", err)
-							c.Close()
-							delete(clients, id)
-						}
-					}
-				}
-			} else {
-				for id, c := range clients {
-					var err error
-					if shared.CheckIfStringInSlice(mentionList, id) {
-						err = c.WriteJSON(&shared.Message{
-							MsgType:   "msg",
-							Message:   text,
-							Sender:    clientID,
-							Mentioned: true,
-							Date:      time.Now(),
-						})
-					} else {
-						err = c.WriteJSON(&shared.Message{
-							MsgType: "msg",
-							Message: text,
-							Sender:  clientID,
-							Date:    time.Now(),
-						})
-					}
-
-					if err != nil {
-						log.Println("Error sending client message:", err)
-						c.Close()
-						delete(clients, id)
-					}
-				}
-			}
-		}
-
+		processClientMessage(clientID, text)
 		clientsLock.Unlock()
 	}
 
@@ -235,4 +129,111 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		Date:    time.Now(),
 	})
 	log.Printf("Client %s disconnected", clientID)
+}
+
+func processClientMessage(clientID, text string) {
+	mentionList := shared.GetUserIDsInChatMessage(text, "@")
+	privateMessageList := shared.GetUserIDsInChatMessage(text, ".")
+
+	if (len(mentionList) == 1 &&
+		strings.ToLower(mentionList[0]) == serverId) ||
+		(len(privateMessageList) == 1 &&
+			strings.ToLower(privateMessageList[0]) == serverId) {
+
+		if strings.HasPrefix(text, "@") {
+			sendServerMessage(&shared.Message{
+				MsgType: "msg",
+				Message: text,
+				Sender:  clientID,
+				Date:    time.Now(),
+			})
+		} else {
+			err := clients[clientID].WriteJSON(&shared.Message{
+				MsgType: "msg",
+				Message: text,
+				Sender:  clientID,
+				Private: true,
+				Date:    time.Now(),
+			})
+
+			if err != nil {
+				log.Println("Error sending client message:", err)
+				clients[clientID].Close()
+				delete(clients, clientID)
+			}
+		}
+
+		botResponse := shared.ServerChat()
+		if len(botResponse) > 0 {
+			if strings.HasPrefix(text, "@") {
+				sendServerMessage(&shared.Message{
+					MsgType:   "msg",
+					Message:   fmt.Sprintf("@%s: %s", clientID, botResponse),
+					Sender:    serverId,
+					Mentioned: true,
+					Date:      time.Now(),
+				})
+			} else {
+				err := clients[clientID].WriteJSON(&shared.Message{
+					MsgType: "msg",
+					Message: botResponse,
+					Sender:  serverId,
+					Private: true,
+					Date:    time.Now(),
+				})
+
+				if err != nil {
+					log.Println("Error sending client message:", err)
+					clients[clientID].Close()
+					delete(clients, clientID)
+				}
+			}
+		}
+	} else {
+		if len(privateMessageList) > 0 {
+			for id, c := range clients {
+				if shared.CheckIfStringInSlice(privateMessageList, id) || id == clientID {
+					err := c.WriteJSON(&shared.Message{
+						MsgType: "msg",
+						Message: shared.RemoveUsersIDFromMessage(text),
+						Sender:  clientID,
+						Private: true,
+						Date:    time.Now(),
+					})
+
+					if err != nil {
+						log.Println("Error sending client message:", err)
+						c.Close()
+						delete(clients, id)
+					}
+				}
+			}
+		} else {
+			for id, c := range clients {
+				var err error
+				if shared.CheckIfStringInSlice(mentionList, id) {
+					err = c.WriteJSON(&shared.Message{
+						MsgType:   "msg",
+						Message:   text,
+						Sender:    clientID,
+						Mentioned: true,
+						Date:      time.Now(),
+					})
+				} else {
+					err = c.WriteJSON(&shared.Message{
+						MsgType: "msg",
+						Message: text,
+						Sender:  clientID,
+						Date:    time.Now(),
+					})
+				}
+
+				if err != nil {
+					log.Println("Error sending client message:", err)
+					c.Close()
+					delete(clients, id)
+				}
+			}
+		}
+	}
 }
