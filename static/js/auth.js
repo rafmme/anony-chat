@@ -133,7 +133,7 @@ const login = async (evt) => {
 
   if (statusCode === 200) {
     localStorage.setItem("userToken", data.user.authToken);
-    window.location.href = "chat.html";
+    window.location.href = "rules.html";
   } else {
     showErrorMessages(errors, errorDiv, errorMessage);
     //loginBtn.style.background = '#d64541';
@@ -186,7 +186,7 @@ const signup = async (evt) => {
 
   if (statusCode === 201) {
     localStorage.setItem("userToken", data.user.authToken);
-    window.location.href = "chat.html";
+    window.location.href = "rules.html";
   } else {
     showErrorMessages(errors, signupErrorDiv, signupErrorMessage);
     //loginBtn.style.background = '#d64541';
@@ -204,10 +204,11 @@ window.onload = () => {
       const { sub } = jwt_decode(token);
 
       if (sub) {
-        window.location.href = "chat.html";
+        window.location.href = "rules.html";
       }
     }
   } catch (error) {
+    localStorage.setItem("accepted", false)
     localStorage.removeItem("userToken");
   }
 };

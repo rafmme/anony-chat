@@ -64,7 +64,7 @@ try {
           "bg-danger"
         );
         notificationBell.classList.add("text-white");
-        mentionText.innerText = `${sender} just mentioned you.`
+        mentionText.innerText = `${sender} just mentioned you.`;
 
         setTimeout(() => {
           notificationBell.classList.remove("text-white");
@@ -146,12 +146,14 @@ try {
 
   const logout = async (evt) => {
     evt.preventDefault();
+    localStorage.setItem("accepted", false);
     localStorage.removeItem("userToken");
     window.location.reload();
   };
 
   logoutBtn.addEventListener("click", logout);
 } catch (error) {
+  localStorage.setItem("accepted", false);
   localStorage.removeItem("userToken");
   window.location.href = "index.html";
 }
@@ -161,11 +163,12 @@ window.onload = () => {
     const token = localStorage.getItem("userToken");
     const { sub } = jwt_decode(token);
 
-    if (!sub) {
+    if (!sub || localStorage.getItem("accepted") === false) {
       localStorage.removeItem("userToken");
       window.location.reload();
     }
   } catch (error) {
+    localStorage.setItem("accepted", false);
     localStorage.removeItem("userToken");
     window.location.href = "index.html";
   }

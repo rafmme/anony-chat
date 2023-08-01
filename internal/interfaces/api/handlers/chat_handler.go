@@ -149,10 +149,11 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 			if len(botResponse) > 0 {
 				if strings.HasPrefix(text, "@") {
 					sendServerMessage(&shared.Message{
-						MsgType: "msg",
-						Message: botResponse,
-						Sender:  serverId,
-						Date:    time.Now(),
+						MsgType:   "msg",
+						Message:   fmt.Sprintf("@%s: %s", clientID, botResponse),
+						Sender:    serverId,
+						Mentioned: true,
+						Date:      time.Now(),
 					})
 				} else {
 					err := clients[clientID].WriteJSON(&shared.Message{
