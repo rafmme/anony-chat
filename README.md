@@ -1,2 +1,2 @@
 # anony-chat
-Anonymous Messaging Platform
+Anonymous Real-Time Messaging Chat Platform

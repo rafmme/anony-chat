@@ -44,6 +44,9 @@ func (server *Server) Start() {
 
 	mux.Handle("/", fs)
 
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swagger-ui"))))
+	mux.HandleFunc("/docs", handlers.SwaggerAPIDocHandler)
+
 	mux.Handle("/api/v1/auth/signup", middleware.ValidateSignupData(
 		handlers.SignupHandler,
 	),
