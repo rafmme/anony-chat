@@ -2,6 +2,7 @@ package shared
 
 import (
 	"fmt"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -145,4 +146,9 @@ func RemoveUsersIDFromMessage(str string) string {
 	chatArray := strings.Split(str, " ")
 	chatArray[0] = ""
 	return strings.Trim(strings.Join(chatArray, " "), " ")
+}
+
+func GenerateRandomNumber(n int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(n)
 }
