@@ -61,6 +61,8 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 	claims := r.Context().Value(shared.AuthData{}).(jwt.MapClaims)
 	userID, ok := claims["sub"].(string)
 
+	action := "joined"
+
 	if !ok {
 		barf.Response(w).Status(http.StatusUnauthorized).JSON(shared.ErrorResponse{
 			StatusCode: 401,
@@ -83,22 +85,31 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 
 	clientID := generateUserID(userID)
 
-	if clients[clientID] == nil {
-		clientsLock.Lock()
-		clients[clientID] = conn
-		clientsLock.Unlock()
+	clientsLock.Lock()
 
-		sendClientCount()
-		sendServerMessage(&shared.Message{
-			MsgType:  "msg",
-			Action:   "joined",
-			ClientID: clientID,
-			Message:  fmt.Sprintf("%s has joined the chat.", clientID),
-			Sender:   serverId,
-			Date:     time.Now(),
-		})
-		log.Printf("Client connected with ID: %s", clientID)
+	if clients[clientID] != nil {
+		if err := conn.Close(); err != nil {
+			barf.Logger().Error(err.Error())
+		}
+
+		action = "rejoined"
+		conn = clients[clientID]
+	} else {
+		clients[clientID] = conn
 	}
+
+	clientsLock.Unlock()
+
+	sendClientCount()
+	sendServerMessage(&shared.Message{
+		MsgType:  "msg",
+		Action:   action,
+		ClientID: clientID,
+		Message:  fmt.Sprintf("%s has %s the chat.", clientID, action),
+		Sender:   serverId,
+		Date:     time.Now(),
+	})
+	log.Printf("Client connected with ID: %s", clientID)
 
 	for {
 		_, msg, err := conn.ReadMessage()

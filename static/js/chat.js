@@ -53,7 +53,14 @@ try {
     }
 
     if (data.msgType.toLowerCase() === "msg") {
-      const { message, sender, date: msgTime, mentioned, private } = data;
+      const {
+        message,
+        action,
+        sender,
+        date: msgTime,
+        mentioned,
+        private,
+      } = data;
       const date = new Date(msgTime).toLocaleString();
 
       if (mentioned) {
@@ -107,7 +114,7 @@ try {
           <div class="font-weight-bold mb-1 them-name-bg">${sender}</div>
           ${
             message.includes("joined") && message.includes(userId)
-              ? "You have joined the chat"
+              ? `You have ${action} the chat`
               : message
           }
         </div>
@@ -124,11 +131,17 @@ try {
   // Handle connection error event
   socket.onerror = function (event) {
     console.error("WebSocket error:", event);
+    localStorage.setItem("accepted", false);
+    localStorage.removeItem("userToken");
+    window.location.href = "index.html";
   };
 
   // Handle connection close event
   socket.onclose = function (event) {
     console.log("WebSocket connection closed:", event);
+    localStorage.setItem("accepted", false);
+    localStorage.removeItem("userToken");
+    window.location.href = "index.html";
   };
 
   sendBtn.addEventListener("click", (evt) => {
