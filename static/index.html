@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login and Sign Up Page</title>
+    <style>
+      @font-face {
+        font-family: "Lato";
+        src: url("./fonts/Lato-Regular.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Lato";
+        src: url("./fonts/Lato-Bold.ttf") format("truetype");
+        font-weight: bold;
+        font-style: normal;
+      }
+
+      body {
+        font-family: "Lato", sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        width: 400px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .alert {
+        background: #e74c3c !important;
+        padding: 5px 10px 5px 10px;
+        color: white;
+        opacity: 1;
+        transition: opacity 0.6s;
+        margin-bottom: 15px;
+        font-family: "Arimo" !important;
+        border-radius: 5px;
+      }
+
+      #loginErrorDiv {
+        display: none;
+      }
+
+      #signupErrorDiv {
+        display: none;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      input {
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+      }
+
+      button {
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        outline: none;
+      }
+
+      .divider {
+        text-align: center;
+        margin: 15px 0;
+        color: #ccc;
+      }
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1><a href="./index.html">Anony Chat 💬</a></h1>
+      <h1>Login</h1>
+      <div class="alert" id="loginErrorDiv">
+        <p id="loginErrorMessage"></p>
+      </div>
+      <form id="loginForm" method="post">
+        <input
+          type="email"
+          placeholder="Email"
+          id="email"
+          name="email"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          id="password"
+          name="password"
+          required
+        />
+        <button id="login-btn">Login</button>
+      </form>
+      <div class="divider">or</div>
+      <h1>Sign Up</h1>
+      <div class="alert" id="signupErrorDiv">
+        <p id="signupErrorMessage"></p>
+      </div>
+      <form id="signupForm">
+        <input
+          type="email"
+          placeholder="Email"
+          id="s-email"
+          name="s-email"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          id="s-password"
+          name="s-password"
+          required
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          id="re-password"
+          name="re-password"
+          required
+        />
+        <button type="submit" id="signup-btn">Sign Up</button>
+      </form>
+    </div>
+
+    <script src="./js/jwt-decode.js"></script>
+    <script src="./js/auth.js"></script>
+  </body>
+</html>

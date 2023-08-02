@@ -1,8 +1,11 @@
 package api
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/opensaucerer/barf"
 	"github.com/rafmme/anony-chat/internal/interfaces/api/handlers"
@@ -10,51 +13,64 @@ import (
 	"github.com/rafmme/anony-chat/pkg/shared"
 )
 
-func StartServer() {
-	allow := true
-	env, err := shared.LoadEnvVars()
+type Server struct {
+	listenAddr string
+}
 
-	if err != nil {
-		barf.Logger().Error(err.Error())
-		os.Exit(1)
-	}
-
-	if err := barf.Stark(barf.Augment{
-		Port:     env.Port,
-		Logging:  &allow,
-		Recovery: &allow,
-	}); err != nil {
-		barf.Logger().Error(err.Error())
-		os.Exit(1)
-	}
-
-	barf.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		barf.Response(w).Status(http.StatusOK).JSON(barf.Res{
-			Status:  true,
-			Data:    nil,
-			Message: "Welcome to the one of a kind, Anonymous Messaging Platform.",
-		})
+func requestLoggerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+		next.ServeHTTP(w, r)
+		duration := time.Since(startTime)
+		log.Printf("%s %s - %v", r.Method, r.URL.Path, duration)
 	})
+}
 
-	apiRouter := barf.RetroFrame("/api").RetroFrame("/v1")
-	apiRouter.Post("/signup", middleware.ValidateSignupData(
+func CreateServer() *Server {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		log.Printf("PORT variable empty!")
+	}
+
+	return &Server{
+		listenAddr: port,
+	}
+}
+
+func (server *Server) Start() {
+	fs := http.FileServer(http.Dir("static"))
+	mux := http.NewServeMux()
+
+	mux.Handle("/", fs)
+
+	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swagger-ui"))))
+	mux.HandleFunc("/docs", handlers.SwaggerAPIDocHandler)
+
+	mux.Handle("/api/v1/auth/signup", middleware.ValidateSignupData(
 		handlers.SignupHandler,
 	),
 	)
-	apiRouter.Post("/auth", middleware.ValidateAuthData(
-		handlers.AuthHandler),
+
+	mux.Handle("/api/v1/auth/login", middleware.ValidateAuthData(
+		handlers.AuthHandler,
+	),
 	)
 
-	chatRouter := barf.RetroFrame("/ws")
-	chatRouter.Get("/chat", middleware.Authenticate(
+	mux.Handle("/ws/chat", middleware.Authenticate(
 		handlers.HandleWebSocketConnection,
 	),
 	)
 
 	defer shared.Database.Close()
 
-	if err := barf.Beck(); err != nil {
-		barf.Logger().Error(err.Error())
+	loggedMux := requestLoggerMiddleware(mux)
+	port := fmt.Sprintf(":%s", server.listenAddr)
+	barf.Logger().Info(fmt.Sprintf("🆙 Server up on PORT %s", port))
+	err := http.ListenAndServe(port, loggedMux)
+
+	if err != nil {
+		barf.Logger().Error("Could'nt start the server. " + err.Error())
 		os.Exit(1)
 	}
 }

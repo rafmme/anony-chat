@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+    <style>
+      @font-face {
+        font-family: "Lato";
+        src: url("./fonts/Lato-Regular.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Lato";
+        src: url("./fonts/Lato-Bold.ttf") format("truetype");
+        font-weight: bold;
+        font-style: normal;
+      }
+
+      body {
+        font-family: "Lato", sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .chat-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .dv {
+        margin-left: 30px;
+        margin-right: 30px;
+      }
+
+      .btn-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      ul li {
+        margin-bottom: 15px;
+      }
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+
+      ul li a {
+        margin-bottom: 50px;
+      }
+
+      .profile {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .profile button {
+        height: 50px;
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        outline: none;
+        margin-bottom: 20px;
+        margin-top: -15px;
+      }
+
+      span {
+        color: #007bff;
+        font-weight: bold;
+      }
+    </style>
+    <link href="./css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="chat-container">
+      <h1><a href="./index.html">Anony Chat 💬</a></h1>
+      <div class="dv">
+        <h3>Usage Tips</h3>
+        <div class="chat-box" id="chatBox">
+          <ul>
+            <li>
+              <strong>Mention</strong> You can mention other users in your
+              messages to get them notified. To do that prefix your message with
+              <span>@</span> followed by the user's ID. For example:
+              <span><em>@user-12345 How are you?</em></span>
+              You can mention more than one user in a message. To achieve that,
+              You follow this format:
+              <span><em>@[user-12345,user-23345] Hello guys!</em></span>
+            </li>
+            <li>
+              <strong>Send private/hidden messages:</strong> You can send other
+              users private/hidden messages that others on the chat room won't
+              see except you and the recipient of the message. To do that prefix
+              your message with dot/period (<span>.</span>) followed by the
+              user's ID. For example: <span>.user-12345 How are you?</span> You
+              can send to more than one user in a message. To achieve that, You
+              follow this format:
+              <span>.[user-12345,user-23345] Hello guys!</span>
+            </li>
+            <li>
+              <strong>Bot Account (ac)</strong> There's a bot account with the
+              name <span><em>ac</em></span> that is present in the Chat room.
+              You can mention the bot in your message or send a private message
+              to it and it will respond with random riddles, jokes and facts.
+              The bot also notifies the chat room when people leave or join the
+              chat. For example: <span><em>@ac hi</em></span> or
+              <span><em>.ac hi</em></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h3>Chat Rules</h3>
+        <div class="chat-box" id="chatBox">
+          <ul>
+            <li>
+              <strong>Respect Others:</strong> Treat all chat participants with
+              respect and kindness. Avoid offensive language, harassment, or
+              bullying of any kind.
+            </li>
+            <li>
+              <strong>Stay Anonymous:</strong> Refrain from sharing personal
+              information, such as real names, addresses, phone numbers, or
+              social media accounts.
+            </li>
+            <li>
+              <strong>No Hate Speech:</strong> Do not engage in hate speech,
+              discrimination, or spreading harmful content. Respect the
+              diversity and inclusivity of the chat community.
+            </li>
+            <li>
+              <strong>Keep it Safe:</strong> Report any suspicious or
+              inappropriate behavior to the moderators/administrators
+              immediately.
+            </li>
+            <li>
+              <strong>No Spamming:</strong> Avoid excessive posting of the same
+              message or irrelevant content. Keep the chat meaningful and
+              engaging.
+            </li>
+            <li>
+              <strong>Keep it Fun:</strong> Engage in enjoyable and constructive
+              conversations. Remember, the goal is to have a pleasant and
+              interactive chat experience.
+            </li>
+          </ul>
+
+          <div class="btn-container">
+            <button
+              class="btn btn-outline-danger btn-sm mr-1 px-3"
+              id="backBtn"
+            >
+              Go Back
+            </button>
+            <button class="btn btn-success btn-sm mr-1 px-3" id="proceedBtn">
+              Proceed to Chat
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./js/jwt-decode.js"></script>
+    <script src="./js/rules.js"></script>
+  </body>
+</html>

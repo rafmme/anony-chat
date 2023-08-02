@@ -1,0 +1,221 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Anonymous Real-Time Chat App",
+    "description": "A Real-Time Chat App",
+    "version": "1.0.0"
+  },
+  "schemes": ["http", "https", "ws"],
+  "basePath": "/",
+  "paths": {
+    "/api/v1/auth/signup": {
+      "post": {
+        "tags": ["User Signup"],
+        "summary": "Create a new user",
+        "operationId": "signupUser",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "signup data",
+            "description": "User Signup Data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignupData"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Data",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "409": {
+            "description": "Conflict Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth - User Login"],
+        "summary": "Authenticate a user",
+        "operationId": "loginUser",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "login data",
+            "description": "User Login Data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginData"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Data",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "User Not Found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/ws/chat": {
+      "get": {
+        "tags": ["Chat - Websocket connection"],
+        "summary": "Connect to the Chat Websocket",
+        "operationId": "connectToChat",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "auth_token",
+            "in": "query",
+            "description": "JWT Token for Authentication",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "$ref": "#/definitions/Response"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": ["id", "email", "password", "createdAt", "updatedAt"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginData": {
+      "type": "object",
+      "required": ["email", "password"],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "SignupData": {
+      "type": "object",
+      "required": ["email", "password", "confirmPassword"],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "required": ["statusCode", "message", "errors"],
+      "properties": {
+        "statusCode": {
+          "type": "number"
+        },
+        "message": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "object"
+        }
+      }
+    },
+    "Response": {
+      "type": "object",
+      "required": ["statusCode", "message", "data"],
+      "properties": {
+        "statusCode": {
+          "type": "number"
+        },
+        "message": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

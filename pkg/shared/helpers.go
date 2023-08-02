@@ -1,19 +1,18 @@
 package shared
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"net"
+	"math/rand"
 	"net/http"
+	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 	"github.com/opensaucerer/barf"
 	domain "github.com/rafmme/anony-chat/pkg/domain/user"
 	"golang.org/x/crypto/bcrypt"
@@ -23,43 +22,31 @@ var (
 	Database *gorm.DB
 )
 
-func LoadEnvVars() (*Env, error) {
-	env := new(Env)
-	if err := barf.Env(env, ".env"); err != nil {
-		return nil, err
-	}
+func LoadEnvVars() {
+	err := godotenv.Load()
 
-	return env, nil
+	if err != nil {
+		barf.Logger().Error(err.Error())
+		os.Exit(1)
+	}
 }
 
 func DbInitializers() {
-	env, err := LoadEnvVars()
-
-	if err != nil {
-		barf.Logger().Error(err.Error())
-		os.Exit(1)
-	}
-
 	var (
-		dbHost     = env.DbHost
-		dbPort     = env.DbPort
-		dbName     = env.DbName
-		dbUser     = env.DbUser
-		dbPassword = env.DbPassword
+		dbHost     = os.Getenv("DB_HOST")
+		dbPort     = os.Getenv("DB_PORT")
+		dbName     = os.Getenv("DB_NAME")
+		dbUser     = os.Getenv("DB_USER")
+		dbPassword = os.Getenv("DB_PASSWORD")
 	)
 
-	databasePort, err := strconv.ParseInt(dbPort, 10, 32)
-	if err != nil {
-		barf.Logger().Error(err.Error())
-		os.Exit(1)
-	}
-
-	dbURL := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
-		dbHost, databasePort, dbUser, dbName, dbPassword)
+	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		dbUser, dbPassword, dbHost, dbPort, dbName)
 
 	db, err := gorm.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %s", err.Error())
+		barf.Logger().Error("Failed to connect to database: " + err.Error())
+		os.Exit(1)
 	}
 
 	Database = db
@@ -78,14 +65,7 @@ func GenerateJWT(userData *domain.User) (string, error) {
 	claims["sub"] = userData.ID
 	claims["exp"] = time.Now().Add(time.Hour * 12).Unix()
 
-	env, err := LoadEnvVars()
-
-	if err != nil {
-		barf.Logger().Error(err.Error())
-		os.Exit(1)
-	}
-
-	return token.SignedString([]byte(env.SecretKey))
+	return token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 }
 
 func HashPassword(password string) (string, error) {
@@ -103,30 +83,72 @@ func PasswordMatches(hashedPassword, password string) bool {
 	return err == nil
 }
 
-func GetAuthToken(reqHeader http.Header, routeType string) string {
+func GetAuthToken(r *http.Request, routeType string) string {
 	var token string
 
 	if routeType == "ws" {
-		return strings.Replace(
-			reqHeader.Get("Sec-Websocket-Protocol"),
-			"Authorization, ", "", 1,
-		)
+		s, err := url.QueryUnescape(r.URL.Query().Get("auth_token"))
+
+		if err != nil {
+			return ""
+		}
+
+		return s
 	}
 
 	token = strings.Replace(
-		reqHeader.Get("Authorization"),
+		r.Header.Get("Authorization"),
 		"Bearer ", "", 1,
 	)
 
 	return token
 }
 
-func (w *CustomResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-	hijacker, ok := w.ResponseWriter.(http.Hijacker)
+func GetUserIDsInChatMessage(chat, prefix string) []string {
+	userIDs := []string{}
 
-	if !ok {
-		return nil, nil, http.ErrNotSupported
+	if strings.HasPrefix(chat, prefix) {
+		if strings.HasPrefix(chat, prefix+"[") {
+			formattedChat := strings.ReplaceAll(
+				strings.ReplaceAll(
+					strings.ReplaceAll(
+						strings.Split(chat, " ")[0], prefix, ""),
+					"[", ""), "]", "",
+			)
+
+			userIDs = strings.Split(formattedChat, ",")
+			return userIDs
+		}
+
+		userIDs = append(userIDs,
+			strings.ReplaceAll(
+				strings.Split(chat, " ")[0],
+				prefix, ""),
+		)
+
+		return userIDs
 	}
 
-	return hijacker.Hijack()
+	return userIDs
+}
+
+func CheckIfStringInSlice(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
+}
+
+func RemoveUsersIDFromMessage(str string) string {
+	chatArray := strings.Split(str, " ")
+	chatArray[0] = ""
+	return strings.Trim(strings.Join(chatArray, " "), " ")
+}
+
+func GenerateRandomNumber(n int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(n)
 }

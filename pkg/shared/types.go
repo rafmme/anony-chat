@@ -1,16 +1,8 @@
 package shared
 
-import "net/http"
-
-type Env struct {
-	Port       string `barfenv:"key=PORT;required=true"`
-	DbHost     string `barfenv:"key=DB_HOST;required=true"`
-	DbPort     string `barfenv:"key=DB_PORT;required=true"`
-	DbName     string `barfenv:"key=DB_NAME;required=true"`
-	DbUser     string `barfenv:"key=DB_USER;required=true"`
-	DbPassword string `barfenv:"key=DB_PASSWORD;required=true"`
-	SecretKey  string `barfenv:"key=SECRET_KEY;required=true"`
-}
+import (
+	"time"
+)
 
 type UserSignupData struct {
 	Email           string `json:"email"`
@@ -33,6 +25,15 @@ type Response struct {
 type AuthData struct {
 }
 
-type CustomResponseWriter struct {
-	http.ResponseWriter
+type Message struct {
+	MsgType     string            `json:"msgType"`
+	ClientID    string            `json:"clientID"`
+	ClientCount int               `json:"clientCount"`
+	ClientsList map[string]string `json:"clientsList"`
+	Action      string            `json:"action"`
+	Message     string            `json:"message"`
+	Sender      string            `json:"sender"`
+	Private     bool              `json:"private"`
+	Mentioned   bool              `json:"mentioned"`
+	Date        time.Time         `json:"date"`
 }

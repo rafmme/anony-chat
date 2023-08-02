@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Anony Chat App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="./css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/modal.css" />
+  </head>
+  <body>
+    <div id="myModal" class="modal" onclick="closeModal()">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Confirm Action</h2>
+        <p>Are you sure you want to leave the Chat room?</p>
+        <div class="modal-buttons">
+          <button onclick="closeModal()">Cancel</button>
+          <button onclick="performAction()">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <main class="content">
+      <div class="container p-0">
+        <h1 class="h3 mb-3">Anony Chat App</h1>
+        <div class="card">
+          <div class="row g-0">
+            <div class="col-12 col-lg-5 col-xl-3 border-right">
+              <div class="px-4 d-none d-md-block">
+                <div class="d-flex align-items-center">
+                  <div class="flex-grow-1">
+                    <h5>...</h5>
+                  </div>
+                </div>
+                <h5>
+                  <span id="clientCount"></span>
+                  Other User(s) Online
+                </h5>
+              </div>
+              <div id="online-peeps"></div>
+              <hr class="d-block d-lg-none mt-1 mb-0" />
+            </div>
+            <div class="col-12 col-lg-7 col-xl-9">
+              <div class="py-2 px-4 border-bottom d-none d-lg-block">
+                <div class="d-flex align-items-center py-1">
+                  <div class="flex-grow-1 pl-3">
+                    <strong>Chat</strong>
+                    <div class="text-muted small">
+                      <strong><span id="userTag"></span></strong>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      class="btn btn-outline-secondary btn-sm mr-1 px-3 hide"
+                      id="notice-bell"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-bell-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"
+                        />
+                      </svg>
+                      <span id="m-txt"></span>
+                    </div>
+                    <button
+                      class="btn btn-primary btn-sm mr-1 px-3"
+                      id="logoutBtn"
+                    >
+                      Leave
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="position-relative">
+                <div class="chat-messages p-4" id="chat-holder"></div>
+              </div>
+              <div class="flex-grow-0 py-3 px-4 border-top">
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Type your message"
+                    id="text-msg"
+                  />
+                  <button class="btn btn-success" id="sendBtn">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="./js/jwt-decode.js"></script>
+    <script src="./js/chat.js"></script>
+  </body>
+</html>
