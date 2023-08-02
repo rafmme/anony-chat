@@ -14,9 +14,9 @@ try {
   const userId = `user-${sub.substring(0, 8)}`;
   userTag.innerText = `Your User ID: ${userId}`;
 
-  const websocketUrl = `ws://localhost:6777/ws/chat?auth_token=${encodeURI(
-    token
-  )}`;
+  const websocketUrl = `wss://${window.location.origin
+    .replace("https://", "")
+    .replace("http://", "")}/ws/chat?auth_token=${encodeURI(token)}`;
 
   const socket = new WebSocket(websocketUrl);
 

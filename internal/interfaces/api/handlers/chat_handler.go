@@ -76,6 +76,11 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	clientIP, err := shared.GetClientIP(r)
+	if err != nil {
+		log.Println("No Client IP: ", err.Error())
+	}
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("WebSocket upgrade failed:", err, userID)
@@ -109,7 +114,7 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		Sender:   serverId,
 		Date:     time.Now(),
 	})
-	log.Printf("Client connected with ID: %s", clientID)
+	log.Printf("Client connected with ID: %s and IP Address: %s", clientID, clientIP)
 
 	for {
 		_, msg, err := conn.ReadMessage()

@@ -7,6 +7,7 @@ schemes:
   - "http"
   - "https"
   - "ws"
+  - "wss"
 basePath: "/"
 paths:
   /api/v1/auth/signup:
@@ -43,7 +44,7 @@ paths:
           description: "Internal Server Error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /auth/login:
+  /api/v1/auth/login:
     post:
       tags:
         - "Auth - User Login"

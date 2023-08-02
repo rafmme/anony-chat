@@ -5,7 +5,7 @@
     "description": "A Real-Time Chat App",
     "version": "1.0.0"
   },
-  "schemes": ["http", "https", "ws"],
+  "schemes": ["http", "https", "ws", "wss"],
   "basePath": "/",
   "paths": {
     "/api/v1/auth/signup": {
@@ -54,7 +54,7 @@
         }
       }
     },
-    "/auth/login": {
+    "/api/v1/auth/login": {
       "post": {
         "tags": ["Auth - User Login"],
         "summary": "Authenticate a user",
