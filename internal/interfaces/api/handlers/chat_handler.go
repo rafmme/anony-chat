@@ -110,7 +110,7 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 		MsgType:  "msg",
 		Action:   action,
 		ClientID: clientID,
-		Message:  fmt.Sprintf("%s has %s the chat.", clientID, action),
+		Message:  fmt.Sprintf("@%s has %s the chat.", clientID, action),
 		Sender:   serverId,
 		Date:     time.Now(),
 	})
@@ -140,7 +140,7 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 	sendClientCount()
 	sendServerMessage(&shared.Message{
 		MsgType: "msg",
-		Message: fmt.Sprintf("%s has left the chat.", clientID),
+		Message: fmt.Sprintf("@%s has left the chat.", clientID),
 		Sender:  serverId,
 		Date:    time.Now(),
 	})
@@ -169,6 +169,7 @@ func processClientMessage(clientID, text string) {
 				Message: text,
 				Sender:  clientID,
 				Private: true,
+				To:      []string{serverId},
 				Date:    time.Now(),
 			})
 
@@ -195,6 +196,7 @@ func processClientMessage(clientID, text string) {
 					Message: botResponse,
 					Sender:  serverId,
 					Private: true,
+					To:      []string{clientID},
 					Date:    time.Now(),
 				})
 
@@ -213,6 +215,7 @@ func processClientMessage(clientID, text string) {
 						MsgType: "msg",
 						Message: shared.RemoveUsersIDFromMessage(text),
 						Sender:  clientID,
+						To:      privateMessageList,
 						Private: true,
 						Date:    time.Now(),
 					})

@@ -34,6 +34,7 @@ type Message struct {
 	Message     string            `json:"message"`
 	Sender      string            `json:"sender"`
 	Private     bool              `json:"private"`
+	To          []string          `json:"to"`
 	Mentioned   bool              `json:"mentioned"`
 	Date        time.Time         `json:"date"`
 }

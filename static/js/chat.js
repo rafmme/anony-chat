@@ -14,7 +14,20 @@ try {
   const userId = `user-${sub.substring(0, 8)}`;
   userTag.innerText = `Your User ID: ${userId}`;
 
-  const websocketUrl = `wss://${window.location.origin
+  const highlightMentionedId = (message) => {
+    if (message.startsWith("@")) {
+      const mentionedUserId = message.split(" ")[0];
+
+      return message.replace(
+        mentionedUserId,
+        `<span class="highlight">${mentionedUserId}</span>`
+      );
+    }
+
+    return message;
+  };
+
+  const websocketUrl = `ws://${window.location.origin
     .replace("https://", "")
     .replace("http://", "")}/ws/chat?auth_token=${encodeURI(token)}`;
 
@@ -60,6 +73,7 @@ try {
         date: msgTime,
         mentioned,
         private,
+        to
       } = data;
       const date = new Date(msgTime).toLocaleString();
 
@@ -89,36 +103,36 @@ try {
                       ${date}
                     </div>
                       <div class="small text-nowrap mt-2 chat-online">
-                        ${private ? "private message" : ""}
+                        ${private ? `private message to ${to}` : ""}
                       </div>
                     </div>
                     <div class="flex-shrink-1 you-chat-bg rounded py-2 px-3 mr-3">
                       <div class="font-weight-bold mb-1 you-name-bg">You</div>
-                      ${message}
+                      ${highlightMentionedId(message)}
                     </div>
                   </div>`;
       } else {
         chatHolder.innerHTML += `<div class="chat-message-left pb-4">
-        <div>
-          <div class="text-muted small text-nowrap mt-2">
-          ${date}
-        </div>
-        <div class="small text-nowrap mt-2 chat-online">
-        ${private ? "private message" : ""}
-        </div>
-        <div class="small text-nowrap mt-2 chat-offline">
-        ${mentioned ? "You were mentioned here!" : ""}
-        </div>
-        </div>
-        <div class="flex-shrink-1 them-chat-bg rounded py-2 px-3 ml-3">
-          <div class="font-weight-bold mb-1 them-name-bg">${sender}</div>
-          ${
-            message.includes("joined") && message.includes(userId)
-              ? `You have ${action} the chat`
-              : message
-          }
-        </div>
-      </div>`;
+          <div>
+            <div class="text-muted small text-nowrap mt-2">
+            ${date}
+          </div>
+          <div class="small text-nowrap mt-2 chat-online">
+          ${private ? `private message from ${sender}` : ""}
+          </div>
+          <div class="small text-nowrap mt-2 chat-offline">
+          ${mentioned ? "You were mentioned here!" : ""}
+          </div>
+          </div>
+          <div class="flex-shrink-1 them-chat-bg rounded py-2 px-3 ml-3">
+            <div class="font-weight-bold mb-1 them-name-bg">${sender}</div>
+            ${
+              message.includes("joined") && message.includes(`@${userId}`)
+                ? `You have ${action} the chat`
+                : highlightMentionedId(message)
+            }
+          </div>
+        </div>`;
       }
     }
   };
