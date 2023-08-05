@@ -148,6 +148,17 @@ func HandleWebSocketConnection(w http.ResponseWriter, r *http.Request) {
 }
 
 func processClientMessage(clientID, text string) {
+	if strings.ToLower(text) == ".q" || strings.ToLower(text) == ".q!" {
+		err := clients[clientID].Close()
+		if err != nil {
+			barf.Logger().Error(err.Error())
+			return
+		}
+
+		delete(clients, clientID)
+		return
+	}
+
 	mentionList := shared.GetUserIDsInChatMessage(text, "@")
 	privateMessageList := shared.GetUserIDsInChatMessage(text, ".")
 

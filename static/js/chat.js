@@ -27,7 +27,7 @@ try {
     return message;
   };
 
-  const websocketUrl = `ws://${window.location.origin
+  const websocketUrl = `wss://${window.location.origin
     .replace("https://", "")
     .replace("http://", "")}/ws/chat?auth_token=${encodeURI(token)}`;
 
@@ -73,7 +73,7 @@ try {
         date: msgTime,
         mentioned,
         private,
-        to
+        to,
       } = data;
       const date = new Date(msgTime).toLocaleString();
 
@@ -165,7 +165,13 @@ try {
     chatMessage = textMessage.trim();
 
     if (chatMessage !== "" && chatMessage !== " ") {
-      socket.send(chatMessage);
+      if (chatMessage.toLowerCase() === ".q") {
+        evt.preventDefault();
+        modal.style.display = "block";
+      } else {
+        socket.send(chatMessage);
+      }
+      
       textElement.value = "";
     }
   });

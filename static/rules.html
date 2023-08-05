@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat</title>
+    <title>Rules | Anony Chat App</title>
     <style>
       @font-face {
         font-family: "Lato";
@@ -116,57 +116,61 @@
               chat. For example: <span><em>@ac hi</em></span> or
               <span><em>.ac hi</em></span>
             </li>
+            <li>
+              <strong>Leave Chat:</strong> To quit the chat, send <span>.q</span
+              ><br />
+              While to end the chat immediately without showing the action
+              confirmation dialog, send
+              <span>.q!</span>
+            </li>
           </ul>
+
+          <div>
+            <h3>Chat Rules</h3>
+            <ul>
+              <li>
+                <strong>Respect Others:</strong> Treat all chat participants
+                with respect and kindness. Avoid offensive language, harassment,
+                or bullying of any kind.
+              </li>
+              <li>
+                <strong>Stay Anonymous:</strong> Refrain from sharing personal
+                information, such as real names, addresses, phone numbers, or
+                social media accounts.
+              </li>
+              <li>
+                <strong>No Hate Speech:</strong> Do not engage in hate speech,
+                discrimination, or spreading harmful content. Respect the
+                diversity and inclusivity of the chat community.
+              </li>
+              <li>
+                <strong>Keep it Safe:</strong> Report any suspicious or
+                inappropriate behavior to the moderators/administrators
+                immediately.
+              </li>
+              <li>
+                <strong>No Spamming:</strong> Avoid excessive posting of the
+                same message or irrelevant content. Keep the chat meaningful and
+                engaging.
+              </li>
+              <li>
+                <strong>Keep it Fun:</strong> Engage in enjoyable and
+                constructive conversations. Remember, the goal is to have a
+                pleasant and interactive chat experience.
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
-      <div>
-        <h3>Chat Rules</h3>
-        <div class="chat-box" id="chatBox">
-          <ul>
-            <li>
-              <strong>Respect Others:</strong> Treat all chat participants with
-              respect and kindness. Avoid offensive language, harassment, or
-              bullying of any kind.
-            </li>
-            <li>
-              <strong>Stay Anonymous:</strong> Refrain from sharing personal
-              information, such as real names, addresses, phone numbers, or
-              social media accounts.
-            </li>
-            <li>
-              <strong>No Hate Speech:</strong> Do not engage in hate speech,
-              discrimination, or spreading harmful content. Respect the
-              diversity and inclusivity of the chat community.
-            </li>
-            <li>
-              <strong>Keep it Safe:</strong> Report any suspicious or
-              inappropriate behavior to the moderators/administrators
-              immediately.
-            </li>
-            <li>
-              <strong>No Spamming:</strong> Avoid excessive posting of the same
-              message or irrelevant content. Keep the chat meaningful and
-              engaging.
-            </li>
-            <li>
-              <strong>Keep it Fun:</strong> Engage in enjoyable and constructive
-              conversations. Remember, the goal is to have a pleasant and
-              interactive chat experience.
-            </li>
-          </ul>
-
-          <div class="btn-container">
-            <button
-              class="btn btn-outline-danger btn-sm mr-1 px-3"
-              id="backBtn"
-            >
-              Go Back
-            </button>
-            <button class="btn btn-success btn-sm mr-1 px-3" id="proceedBtn">
-              Proceed to Chat
-            </button>
-          </div>
+      <div class="chat-box" id="chatBox">
+        <div class="btn-container">
+          <button class="btn btn-outline-danger btn-sm mr-1 px-3" id="backBtn">
+            Go Back
+          </button>
+          <button class="btn btn-success btn-sm mr-1 px-3" id="proceedBtn">
+            Proceed to Chat
+          </button>
         </div>
       </div>
     </div>
